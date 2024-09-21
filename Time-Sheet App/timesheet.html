@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timesheet</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style>
+        .content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-3">
+        <div class="row mb-1">
+            <div class="col text-left">
+                <button class="btn btn-primary" id="add-timesheets">Add Timesheets</button>
+            </div>
+            <div class="col text-left">
+                <button class="btn btn-primary" id="edit-timesheets">Edit Timesheets</button>
+            </div>
+            <div class="col text-left">
+                <button class="btn btn-primary" id="get-timesheets">Get Timesheets</button>
+            </div>
+            <div class="col text-left">
+                <button class="btn btn-primary" id="delete-timesheets">Delete Timesheets</button>
+            </div>
+        </div>
+
+        <!-- Add Timesheet Section -->
+        <div class="content" id="add-timesheet-content">
+            <h3>Add Timesheets</h3>
+            <div class="card mx-2 my-3">
+                <div class="card-body">
+                    <form id="activity-form">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>On Leave</th>
+                                    <th>Activities</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="date" class="form-control" id="date" placeholder="dd-mm-yyyy">
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="onLeave">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td id="timsheets"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <div class="col text-right m-2">
+                                            <button type="button" id="activity-button" class="btn btn-secondary">Add Activity</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col text-right">
+                                <!-- <button type="button" class="btn btn-success" id="preview-button" data-toggle="modal" data-target="#exampleModal">Preview</button> -->
+                                <button type="button" class="btn btn-danger" onclick="cancel()">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="onSave()">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Default Content -->
+        <div class="content" id="default-content">
+            <h3>Welcome to the Timesheet Management System</h3>
+        </div>
+
+        <!-- Edit Timesheet Section -->
+        <div class="content" id="edit-timesheet-content">
+            <h3>Edit Timesheets</h3>
+            <label for="edit-id">Enter Timesheet ID:</label>
+            <input type="text" id="edit-id" class="form-control">
+            <button type="button" id="fetch-timesheet" class="btn btn-primary">Fetch Timesheet</button>
+            <div id="edit-timesheet-form" style="display:none;">
+                <h4>Edit Timesheet</h4>
+                <form id="edit-activity-form">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>On Leave</th>
+                                <th>Activities</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="date" class="form-control" id="edit-date">
+                                </td>
+                                <td>
+                                    <select class="form-control" id="edit-onLeave">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </td>
+                                <td id="edit-timsheets"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div class="col text-right m-2">
+                                        <button type="button" id="edit-activity-button" class="btn btn-secondary">Add Activity</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col text-right">
+                            <button type="button" class="btn btn-danger" onclick="hideEditForm()">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="save-edited-timesheet" onclick="onSaveEdit()">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table id="timesheet-table-edit" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>On Leave</th>
+                        <th>Project</th>
+                        <th>Sub-Project</th>
+                        <th>Batch</th>
+                        <th>Description</th>
+                        <th>Hours Needed</th>
+                    </tr>
+                </thead>
+                <tbody id="timesheet-list-edit">
+                    <!-- Timesheet rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Get Timesheet Section -->
+        <div class="content" id="get-timesheet-content">
+            <h3>Get Timesheets</h3>
+            <table id="timesheet-table" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>On Leave</th>
+                        <th>Project</th>
+                        <th>Sub-Project</th>
+                        <th>Batch</th>
+                        <th>Description</th>
+                        <th>Hours Needed</th>
+                    </tr>
+                </thead>
+                <tbody id="timesheet-list">
+                    <!-- Timesheet rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Delete Timesheet Section -->
+        <div class="content" id="delete-timesheet-content">
+            <h3>Delete Timesheet</h3>
+            <label for="delete-id">Enter Timesheet ID:</label>
+            <input type="text" id="delete-id" class="form-control">
+            <button type="button" id="confirm-delete" class="btn btn-danger">Confirm Delete</button>
+            <button type="button" id="cancel-delete" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Preview Timesheet Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Preview Added Timesheet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="dynamicTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No.</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">On Leave</th>
+                                <th class="text-center">Project</th>
+                                <th class="text-center">Sub-Project</th>
+                                <th class="text-center">Batch</th>
+                                <th class="text-center">Activity</th>
+                                <th class="text-center"><i class="far fa-clock"></i></th>
+                                <th class="text-center">Total Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-body">
+                            <!-- Rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="onSave()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="timesheet.js"></script>
+</body>
+
+</html>
